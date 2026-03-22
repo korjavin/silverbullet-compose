@@ -32,7 +32,6 @@ services:
       - "traefik.http.routers.silverbullet-public.rule=Host(`${SILVERBULLET_HOST}`) && Path(`/service_worker.js`)"
       - "traefik.http.routers.silverbullet-public.entrypoints=websecure"
       - "traefik.http.routers.silverbullet-public.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
-      - "traefik.http.routers.silverbullet-public.priority=10"
 
       # --- Service Configuration ---
       - "traefik.http.services.silverbullet.loadbalancer.server.port=3000"
