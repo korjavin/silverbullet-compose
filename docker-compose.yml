@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  silverbullet:
+    image: ${SILVERBULLET_IMAGE:-ghcr.io/korjavin/silverbullet-vendor:latest}
+    container_name: ${SILVERBULLET_CONTAINER_NAME:-silverbullet}
+    restart: unless-stopped
+    networks:
+      - traefik_default
+    volumes:
+      - ${SPACE_PATH:-./space}:/space
+    environment:
+      # Optional: set SB_USER if you want a second auth layer in addition to forward-auth.
+      # With forward-auth protecting the route, this is typically not needed.
+      # SB_USER: ${SB_USER:-}
+      SB_PORT: ${SB_PORT:-3000}
+      SB_HOSTNAME: ${SB_HOSTNAME:-0.0.0.0}
+      SB_INDEX_PAGE: ${SB_INDEX_PAGE:-index}
+    labels:
+      # --- Enable Traefik ---
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_default"
+
+      # --- Router Configuration ---
+      - "traefik.http.routers.silverbullet.rule=Host(`${SILVERBULLET_HOST}`)"
+      - "traefik.http.routers.silverbullet.entrypoints=websecure"
+      - "traefik.http.routers.silverbullet.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
+
+      # --- Service Configuration ---
+      - "traefik.http.services.silverbullet.loadbalancer.server.port=3000"
+
+      # --- OAuth2 Protection with Auto-Redirect ---
+      - "traefik.http.routers.silverbullet.middlewares=auth-errors@docker,forward-auth@docker"
+
+networks:
+  traefik_default:
+    external: true
+    name: ${TRAEFIK_NETWORK_NAME:-traefik_default}
