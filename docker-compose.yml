@@ -20,16 +20,22 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik_default"
 
-      # --- Router Configuration ---
+      # --- Main Router (OAuth2 protected) ---
       - "traefik.http.routers.silverbullet.rule=Host(`${SILVERBULLET_HOST}`)"
       - "traefik.http.routers.silverbullet.entrypoints=websecure"
       - "traefik.http.routers.silverbullet.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
+      - "traefik.http.routers.silverbullet.middlewares=auth-errors@docker,forward-auth@docker"
+
+      # --- Public Router (no auth — required for service worker registration) ---
+      # The browser fetches /service_worker.js via the SW API before cookies are available,
+      # causing forward-auth to return 401 and the browser to abort SW registration.
+      - "traefik.http.routers.silverbullet-public.rule=Host(`${SILVERBULLET_HOST}`) && Path(`/service_worker.js`)"
+      - "traefik.http.routers.silverbullet-public.entrypoints=websecure"
+      - "traefik.http.routers.silverbullet-public.tls.certresolver=${TRAEFIK_CERTRESOLVER:-myresolver}"
+      - "traefik.http.routers.silverbullet-public.priority=10"
 
       # --- Service Configuration ---
       - "traefik.http.services.silverbullet.loadbalancer.server.port=3000"
-
-      # --- OAuth2 Protection with Auto-Redirect ---
-      - "traefik.http.routers.silverbullet.middlewares=auth-errors@docker,forward-auth@docker"
 
 networks:
   traefik_default:
