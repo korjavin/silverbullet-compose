@@ -14,7 +14,6 @@ services:
       # With forward-auth protecting the route, this is typically not needed.
       # SB_USER: ${SB_USER:-}
       SB_PORT: ${SB_PORT:-3000}
-      SB_HOSTNAME: ${SB_HOSTNAME:-0.0.0.0}
       SB_INDEX_PAGE: ${SB_INDEX_PAGE:-index}
     labels:
       # --- Enable Traefik ---

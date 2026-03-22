@@ -72,7 +72,6 @@ Push to `master` or run the **Deploy SilverBullet Stack** workflow manually in G
 | `TRAEFIK_CERTRESOLVER` | `myresolver` | No | Traefik TLS cert resolver name |
 | `SPACE_PATH` | `./space` | No | Host path for notes storage (use absolute path in production) |
 | `SB_PORT` | `3000` | No | Port SilverBullet listens on |
-| `SB_HOSTNAME` | `0.0.0.0` | No | Address SilverBullet binds to |
 | `SB_INDEX_PAGE` | `index` | No | Default page to load |
 | `SB_USER` | — | No | Built-in auth (`username:password`). Not needed when using forward-auth. |
 
